@@ -1,0 +1,77 @@
+import pygame
+import sys
+
+pygame.init()
+
+# Screen settings
+WIDTH, HEIGHT = 800, 600
+BLOCK_SIZE = 40
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Mini Minecraft 2D")
+
+# Colors
+SKY = (135, 206, 235)
+GRASS = (34, 139, 34)
+DIRT = (139, 69, 19)
+
+# Create world grid
+cols = WIDTH // BLOCK_SIZE
+rows = HEIGHT // BLOCK_SIZE
+
+world = []
+for y in range(rows):
+    row = []
+    for x in range(cols):
+        if y > rows // 2:
+            row.append("dirt")
+        elif y == rows // 2:
+            row.append("grass")
+        else:
+            row.append("air")
+    world.append(row)
+
+# Player
+player_x = cols // 2
+player_y = rows // 2 - 2
+
+clock = pygame.time.Clock()
+
+while True:
+    screen.fill(SKY)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT]:
+        player_x -= 1
+    if keys[pygame.K_RIGHT]:
+        player_x += 1
+    if keys[pygame.K_UP]:
+        player_y -= 1
+    if keys[pygame.K_DOWN]:
+        player_y += 1
+
+    # Draw world
+    for y in range(rows):
+        for x in range(cols):
+            block = world[y][x]
+            rect = pygame.Rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
+
+            if block == "dirt":
+                pygame.draw.rect(screen, DIRT, rect)
+            elif block == "grass":
+                pygame.draw.rect(screen, GRASS, rect)
+
+    # Draw player
+    pygame.draw.rect(
+        screen,
+        (255, 0, 0),
+        (player_x * BLOCK_SIZE, player_y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE),
+    )
+
+    pygame.display.flip()
+    clock.tick(10)
